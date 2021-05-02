@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>用户管理</title>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
+<style type="text/css">
+.form-inline .form-group {
+    margin: 0 15px 10px 0;
+}
+</style>
+</head>
+<body>
+<!-- Modal -->
+<div class="modal fade" id="userModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">编辑</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+      		<form id="videoForm"  class="model-form" th:action="@{mng/saveVideo.do}" method="post">
+		    <input name="id" type="hidden" value="-1"/>
+		    <div class="form-group">
+		          <label class="control-label" >标题</label>
+		          <div class="controls">
+		            <input name="videoTitle" type="text"  class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+			    <label for="exampleFormControlSelect1">分类</label>
+			    <select name="videoType" class="form-control" id="exampleFormControlSelect1">
+			      <option value="0">其他</option>
+			    </select>
+			  </div>
+			<div class="form-group">
+	          <label class="control-label">公开类型</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="publicType" checked="checked"  value="0">不公开（登录后可见)
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="publicType" value="1">公开(游客可见)
+				</label>
+	         		 </div>
+	        	</div>
+	        <div class="form-group">
+	          <label class="control-label">是否删除</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="deleteFlag" checked="checked"  value="0">正常
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="deleteFlag" value="1">删除
+				</label>
+	         		 </div>
+	        	</div>
+		    <div class="form-group">
+		          <label class="control-label" >描述</label>
+		          <div class="controls">
+		            <input name="videoDesc" type="text" placeholder="" class="form-control">
+		          </div>
+		        </div>
+		        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveVideo()" >保存</button>
+      </div>
+     
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+	<div th:replace="fragment/header"></div>
+	<div class="container px-0 mt-3">
+		<div style="padding: 20px 0;">
+	             	<form class="form-inline" id="form_reportTopDomain" >	
+					  <div class="form-group">
+						    <label>分类：</label>
+						    <select name="videoType" class="form-control" >
+						     <option value="">不限</option>
+						      <option value="其他">其他</option>
+						    </select>
+						 </div>
+					  <div class="form-group">
+						    <label for="exampleFormControlSelect1">是否公开：</label>
+						    <select name="publicType" class="form-control" id="exampleFormControlSelect1">
+						      <option value="-1">不限</option>
+						      <option value="1">公开</option>
+						      <option value="0">不公开</option>
+						    </select>
+						 </div>
+					  <div class="form-group"><button id="btnQuery" type="button" class="btn btn-primary" onclick="queryReportTopDomain()">查询</button>
+					  </div>
+					
+					</form>
+	             </div>
+	<table id="videoTable" class="display" style="width:100%;word-break:break-all;">
+        <thead>
+            <tr>
+                 <th>用户账号</th>
+                  <th>操作</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>用户账号</th>
+                  <th>操作</th>
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+	 <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+   <!--  <script type="text/javascript" srs="https://code.jquery.com/jquery-3.5.1.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+ 	<script type="text/javascript" src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+ 	<script type="text/javascript" src="/res/plugins/moment.js"></script>
+ 	<script type="text/javascript" src="/res/plugins/jquery.easyui.min.js"></script>
+ 	<script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+ 	<script type="text/javascript">
+ 	var videoTable;
+ 	$(document).ready( function () {
+ 		$('#pageSysMng').addClass("active");
+ 	   videoTable = $('#videoTable').DataTable({
+ 			rowId: 'username',
+ 			responsive: true,
+ 			scrollX: false,
+ 			select: {
+ 				info:false,
+ 				style:"single"
+ 			},
+ 			lengthMenu: [ 15 ,40,30,20 , 50, 60],
+ 			"paging": true,
+ 			"pagingType": "full_numbers",
+ 			"lengthChange": true,
+ 			"searching": true,
+ 			"ordering": false,
+ 			"info": true,
+ 			"autoWidth": false,
+ 			"language": {
+ 				"url": "/res/dist/Chinese.json"
+ 			},
+ 			//ajax: '/mng/videoList.do',
+ 			columns: [
+ 	            { data: "username"},
+ 	            {
+ 	          	  data:null,
+ 	          	  className:"center",
+ 	          	  render:function(data,type,row){
+ 	          		  var str = '';
+	          			  //
+	          			  str +='<a href="/details/'+row.id+'" target="_blank"><ion-icon name="play-circle-outline"></ion-icon>播放</a>';
+	          			  //编辑
+	          			  str += '  <a href="#" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#userModal"><ion-icon name="create-outline"></ion-icon>编辑</a>'; 
+	          			  //删除 
+	          			  if(row.deleteFlag==0)
+	          			  str += '  <a  href="#" class="editor_remove" ><ion-icon name="close-circle-outline"></ion-icon>删除</a>';
+	          			  //彻底删除
+	          			  str += '  <a href="#" class="editor_remove_completely" ><ion-icon name="trash-outline"></ion-icon>物理删除</a>';
+ 	          		  return str;
+ 	          	  } 
+ 	            }
+ 	        ],
+ 	   });
+ 	   
+  	 $('#userModal').on('show.bs.modal', function (event) {
+ 		  var modal = $(this);
+ 		  var button = $(event.relatedTarget);
+ 		  var  row = videoTable.row($(button).closest('tr')).data();
+ 		  //var id = row.id;
+ 		/*   modal.find('.model-form input[name=id]').val(row.id);
+ 		  modal.find('.model-form *[name=videoDesc]').val(row.videoDesc); */
+ 		  modal.find('.model-form').form('load',row);
+ 	});
+  	$('#videoTable').on('click', 'a.editor_remove', function (e) {
+ 	    e.preventDefault();
+ 	    //var target = $(this).data('target');
+ 	    if(confirm("本操作仅标识此记录为删除状态而不会删除视频文件，（若要同时删除视频文件，请使用‘物理删除’操作），确定要删除该条记录吗？"))
+ 	    {
+     		var row= videoTable.row($(this).closest('tr')).data();
+     		var rowIdx = videoTable.row($(this).closest('tr')).index();
+     		var params = {};
+    	    	params.id = row.id;
+     		$.post('/mng/removeVideo.do',params,function(data){
+ 	    		var data = eval('(' + data + ')');
+ 	    		if(data.success){
+ 	    			row.deleteFlag = 1;
+ 	    			videoTable.row(rowIdx).data(row).draw(false);
+ 	    			alert(data.info);
+ 		        }else{
+ 		        	alert(data.info);
+ 		        }
+ 	    	});
+ 	    }
+ 	} );
+  	$('#videoTable').on('click', 'a.editor_remove_completely', function (e) {
+ 	    e.preventDefault();
+ 	    //var target = $(this).data('target');
+ 	    if(confirm("本操作将同时删除记录和视频文件，且无法恢复，请慎重操作。确定要完全删除吗？"))
+ 	    {
+     		var row= videoTable.row($(this).closest('tr')).data();
+     		var rowIdx = videoTable.row($(this).closest('tr')).index();
+     		var params = {};
+    	    	params.id = row.id;
+     		$.post('/mng/removeVideoCompletely.do',params,function(data){
+ 	    		var data = eval('(' + data + ')');
+ 	    		if(data.success){
+ 	    			videoTable.row(rowIdx).remove().draw(false);
+ 	    			alert(data.info);
+ 		        }else{
+ 		        	alert(data.info);
+ 		        }
+ 	    	});
+ 	    }
+ 	} );
+ } );
+function saveVideo(){
+	 $('#videoForm').form('submit', {
+         success: function (data) {
+             var data = eval('(' + data + ')');
+             if (data.success) {
+            	 $('#userModal').modal('hide');
+            	 videoTable.row('#'+data.data.id).data(data.data).draw(false);//.select().draw(false);
+            	 alert(data.info);
+             }else{
+            	 alert(data.info);
+             }
+         }
+     });
+ }
+function queryReportTopDomain(){
+	$('#form_reportTopDomain #btnQuery').text('正在查询');
+	$('#form_reportTopDomain #btnQuery').attr('disabled',true);
+	var params = $('#form_reportTopDomain').serialize();
+	var url = '/mng/videoList.do?'+params; 
+	videoTable.ajax.url(url).load(function(json){
+		$('#form_reportTopDomain #btnQuery').text('查询');
+		$('#form_reportTopDomain #btnQuery').attr('disabled',false);
+	});
+}
+ 	</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org" >
+  <nav aria-label="Page navigation example">
+	  <ul class="pagination justify-content-center">
+	    <li class="page-item " th:classappend="${!page.hasPrevious}?'disabled' ">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current-1}" aria-label="Previous">
+		        <span aria-hidden="true">&laquo;</span>
+		     </a>
+	    </li>
+	    <li th:if="${page.current-3>0}" class="page-item">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current-3}+'&&seachInfo='+seachInfo" th:text="${page.current-3}">1</a></li>
+	    <li th:if="${page.current-2>0}" class="page-item">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current-2}+'&&seachInfo='+seachInfo" th:text="${page.current-2}">1</a></li>
+	    <li th:if="${page.hasPrevious}" class="page-item">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current-1}+'&&seachInfo='+seachInfo" th:text="${page.current-1}">1</a></li>
+	    <li class="page-item active" aria-current="page">
+		      <span class="page-link" th:text="${page.current}">2
+		      </span>
+		    </li>
+	    <li th:if="${page.current+1<=totalPages}" class="page-item">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current+1}+'&&seachInfo='+seachInfo"  th:text="${page.current+1}">3</a></li>
+	    <li th:if="${page.current+2<=totalPages}" class="page-item">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current+2}+'&&seachInfo='+seachInfo"  th:text="${page.current+2}">4</a></li>
+	    <li th:if="${page.current+3<=totalPages}" class="page-item">
+	    	<a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current+3}+'&&seachInfo='+seachInfo"  th:text="${page.current+3}">5</a></li>
+	    <li class="page-item" th:classappend="${!page.hasNext}?'disabled' ">
+	      <a class="page-link" th:href="'/loadSeach_p?pageIndex='+${page.current-1}+'&&seachInfo='+seachInfo" aria-label="Next">
+	        <span aria-hidden="true">&raquo;</span>
+	      </a>
+	    </li>
+	  </ul>
+	</nav>
+	<div th:if="${page.total<=0}" class="container px-1 d-flex justify-content-center" style="margin-top: 30px;">
+		<b>ÔÝÎÞÊý¾Ý</b>
+	</div>
+</html>

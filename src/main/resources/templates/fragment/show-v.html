@@ -1,0 +1,10 @@
+<html xmlns:th="http://www.thymeleaf.org" >
+	<div class="col my-3 " th:each="v:${page.records}"> <!-- page.records 一页记录（一组数据） -->
+	   	<div class="bg-white pb-2">
+		    <a th:href="@{'/details/'+${v.id}}" class="text-dark" target="_blank" >
+				<img src="/res/dist/img/default_video.jpg" width="100%">	
+				<span class="ml-2" th:text="${v.getSrsStream()}">标题</span>   
+		    </a>
+	    </div>
+	</div>
+</html>

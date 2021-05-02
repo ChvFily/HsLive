@@ -1,0 +1,133 @@
+<!DOCTYPE html> 
+<!-- PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" -->
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<title>搜索前内容提示</title>
+ 
+<style type="text/css">
+/*  提示div的样式  */
+#suggest {
+    width:100px;
+    border:1px solid black;
+    font-size:14px;
+}
+ 
+/* 提示信息鼠标覆盖时信息 */
+div.over {
+    border:1px solid #999;
+    background:#FFFFCC;
+    cursor:hand;
+}
+ 
+/* 提示信息鼠标移出时信息 */
+div.out {
+    border: 1px solid #FFFFFF;
+    background:#FFFFFF;
+}
+</style>
+ 
+<script type="text/javascript">
+var xmlHttp; //全局 App 请求 数据
+var currentInfo="";
+var counter=1;
+var isReading = false;
+ 
+function readInfo(){
+	var info =document.getElementById("info").value; //文本  输入的信息
+	if(currentInfo==info && info!=""){
+		counter++;
+		
+	}else{
+		currentInfo=info;
+		counter=1;
+		
+	}
+	if(counter==3){
+		getSuggest(info);
+		isReading=false;
+		
+	}else{
+		setTimeout("readInfo()", 200);
+	}
+}
+/**
+ * 更新搜索框 内容
+*/
+function resetReading(){
+	// alert("输入变化了")
+	if(!isReading){
+		isReading=true;
+		readInfo();  // 搜索内容
+	}
+}
+
+function createXmlHttp(){
+	if(window.XMLHttpRequest){
+		xmlHttp = new XMLHttpRequest();
+	}else{
+		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+}
+
+function getSuggest(info){
+	createXmlHttp(); //创建http 请求
+	xmlHttp.open("GET", "http://localhost:8085/testInfo?info="+info,true);  //  http://localhost:8085/testInfo?info=yuxuhang
+	xmlHttp.onreadystatechange = showSuggest;  // 当页面属性改变 时 触发修改页面（）
+	xmlHttp.send(null);   // 使用post 方式时 才会改变响应的 内容
+}
+function clearSuggest(){
+	document.getElementById("suggest").innerHTML ="";
+	
+}
+ 
+function createSuggest(text){
+    var sDiv  = "<div class='out' onmouseover=\"this.className='over'\" onmouseout = \"this.className='out'\" onclick=\"setSuggest(this)\">"+text+"</div>";
+	document.getElementById("suggest").innerHTML +=sDiv;
+}
+function displaySuggest(){
+	document.getElementById("suggest").style.display="";
+}
+function hiddentSuggest(){
+	document.getElementById("suggest").style.display="none";
+}
+/**
+ * 搜索框变动时，触发该函数 
+*/
+function showSuggest(){
+	if(xmlHttp.readyState == 4){ // 如果状态为4 返回数据
+		clearSuggest(); //清除数据
+		var suggestsText = xmlHttp.responseText; // 返回 的数据 如果 是 josin 
+
+		if(suggestsText !=""){
+			createSuggest(suggestsText);
+			displaySuggest();  // 展示数据
+		}else{
+			hiddentSuggest();
+		}
+	}
+}
+function setSuggest(divObj){
+	document.getElementById("info").value=divObj.innerHTML;
+	hiddentSuggest();
+}
+function showInfo(){
+	alert("nihao!");
+}
+</script>
+</head>
+ 
+<body οnlοad="readInfo()">
+<div >
+<h1>搜索前内容提示</h1>
+<span><b>百度搜索</b></span>
+<input type="text" name="info" id="info" style="width: 261px;" onkeyup="resetReading()">
+<!-- <input type="text" name="info" id="info" style="width:362px" οnkeyup="resetReading()">  当搜索框有提示时 不断搜索相关的信息，并展示出来 resetReading() -->
+<!-- <input type="button" value="百度一下" οnclick="showInfo()"> -->
+<input type="button" value="搜索" onclick="showInfo()">
+
+<!-- 用于显示提示信息的div --> 
+<div id="suggest" style="display:none;position:relative;left:69px;width:360px"></div>
+</div>
+</body>
+</html>

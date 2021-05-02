@@ -1,0 +1,59 @@
+<div class="bg-white border-bottom" style="display: block;position: -webkit-sticky;position: sticky;top: 0;z-index: 999;" >
+<nav class="container navbar navbar-expand-lg navbar-light">
+  <a class="navbar-brand" href="/">
+  	<img class="d-inline-block align-center h-100 mr-1" alt=""
+					src="/res/dist/img/logo.png"><b>海师视频平台</b></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse flex-grow-1" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li id="pageIndex" class="nav-item">
+        <a   class="nav-link" href="/" >首页</a>
+      </li>
+      <li id="pageVideo" class="nav-item">
+        <a  class="nav-link" href="/pageVideo">视频</a>
+      </li>
+       <li id="pageLive" class="nav-item">
+        <a  class="nav-link" href="/pageLive">直播</a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li sec:authorize="isAuthenticated()" class="nav-item">
+        <a  class="nav-link" href="#" ><font color="blue">
+					<b sec:authentication="name">aabb</b></font></a>
+      </li>
+      <li id="pageVideoMng"  sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item">
+        <a  class="nav-link" href="/mng">视频管理</a>
+      </li>
+      <li id="pagePublish"  sec:authorize="hasRole('ROLE_ADMIN')" class="nav-item">
+        <a  class="nav-link" href="#">开直播</a>
+      </li>
+      <li id="pageSysMng" class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          系统管理
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">SRS服务器管理</a>
+          <a class="dropdown-item" href="#">视频分类管理</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">用户管理</a>
+        </div>
+      </li>
+       <li sec:authorize="hasRole('ROLE_ADMIN')"  class="nav-item">
+        <a  class="nav-link" href="/console/index.html" target="_blank">SRS控制台</a>
+      </li>
+      <li sec:authorize="isAuthenticated()" class="nav-item">
+          <form th:action="@{/logout}" method="post"><button type="submit" class="btn nav-link">退出</button> 
+		    	</form>
+      </li>
+   	 <li sec:authorize="isAnonymous()" class="nav-item">
+        <a  class="nav-link" href="/loginPage" >登录</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+</div>
