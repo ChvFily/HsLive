@@ -1,5 +1,6 @@
 package com.hs.live.controller;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,11 +35,14 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hs.live.entity.HsFileServer;
 import com.hs.live.entity.HsVideo;
+import com.hs.live.mapper.HsVideoMapper;
 import com.hs.live.service.IHsUserService;
 import com.hs.live.service.IHsVideoService;
 import com.hs.live.service.impl.HsFileServerServiceImpl;
 import com.hs.live.srs.LiveStream;
 import com.hs.live.util.LiveProperties;
+import com.hs.live.util.VideoLiveUtil;
+import com.hs.live.util.VideoUtil;
 //首页
 @CrossOrigin  //支持跨域问题
 @Controller
@@ -49,6 +53,9 @@ public class WebController {
 	@Autowired IHsVideoService vs;
 	@Autowired LiveProperties liveProperties;
 	@Autowired HsFileServerServiceImpl fss;
+	
+	
+	boolean flageIsVideoFramg = true;  // 是否执行剪切视频图片的功能
 	
 //	@Autowired List<HsVideo> videolist = new ArrayList<>(); // all videos name
 //	@Autowired List<String>  videoAames = new ArrayList<>() ;
@@ -62,7 +69,37 @@ public class WebController {
 	public String mng() {
 		return "videoMng";
 	}
-	/*{"code":0,"server":46638,
+
+	/**
+	 * 获取视频流
+	 * 更新视频的图片
+	 * 
+	 * 
+	 * */
+	@RequestMapping("/streams.do")
+	public String streams(Model model) {
+		List<LiveStream> liveList = getActiveStreams();
+		String url = "";
+		//String dir = "D:\\liveTempImg/";  //本地图片
+		String dir = "//var//www//html//live//liveImg//";   // /var/www/html/live/liveImg/ 在服务器上对应的文件 liveImg 存放视频对应文件夹
+		//获取数据流地址 rtmp
+		//拼凑地址
+		for(LiveStream live:liveList) {
+			// 获取数据流地址
+			url="rtmp://"+live.ip+":1935/"+live.app+"/"+live.name;
+			// 生成对应的图片
+			VideoUtil.getFirtPicByStream(url, dir+live.name+".jpg");
+		}
+		// String url = "rtmp://"+ip+":1935/"+app+"/"+name;  
+		model.addAttribute("streams", liveList);   // 获取 stream 字段的 数据 
+		return "fragment/liveFragment";
+		
+	}
+	/**
+	 * 
+	 *
+	 * 数据格式
+	 * {"code":0,"server":46638,
 	 *	"streams":[
 	 *  	{	
 	 	*  		"id":46646,"name":"test","vhost":46639,"app":"live","live_ms":1611110008857,"clients":3,"frames":1626,
@@ -74,14 +111,11 @@ public class WebController {
 		 *		"audio":{"codec":"AAC","sample_rate":44100,"channel":2,"profile":"LC"}
 	 *		}
 	 *  ]}
+	 *  
+	 *  url =  "rtmp://"+ip+":1935/"+app+"/"+name;
+	 *  获取当前live info
 	 * 
 	 */
-	//获取视频流列表
-	@RequestMapping("/streams.do")
-	public String streams(Model model) {
-		model.addAttribute("streams", getActiveStreams());  // 获取 stream 字段的 数据 
-		return "fragment/liveFragment";
-	}
 	private List<LiveStream>  getActiveStreams() {
 		List<LiveStream> ret = new ArrayList<>();
 		List<HsFileServer> fsList = fss.list();
@@ -107,18 +141,17 @@ public class WebController {
 	 * */
 	@RequestMapping("/testInfo")
 	@ResponseBody  // 发送数据能力  
-	public List<HsVideo> testInfo(String info) {
+	public String testInfo(String info) {
 		/**
 		 * 根据名称搜索，返回所有的关键字 
 		 * */
-		
 		//判断是否为管理员
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		//System.out.println(a.toString());
-		boolean onlyPub = true;//只查找 公开的视频
-		if(a!=null  && a.isAuthenticated() && !(a instanceof AnonymousAuthenticationToken)) { //认证后查询所有
-			onlyPub = false;
-		}
+//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//		//System.out.println(a.toString());
+//		boolean onlyPub = true;//只查找 公开的视频
+//		if(a!=null  && a.isAuthenticated() && !(a instanceof AnonymousAuthenticationToken)) { //认证后查询所有
+//			onlyPub = false;
+//		}
 //		Page<HsVideo> p = new Page<>();
 //		try {
 //			List<HsVideo> rs = vs.page(p,Wrappers.lambdaQuery(HsVideo.class)
@@ -129,6 +162,7 @@ public class WebController {
 //			e.printStackTrace();
 //			
 //		}
+		return info;
 	}
 	
 	/*
@@ -161,7 +195,7 @@ public class WebController {
 		}catch (Exception e) {
 			e.printStackTrace();
 			
-		}
+		} 
 		model.addAttribute("page",p); // 添加数据到 主页点的前端 所有内容
 		model.addAttribute("totalPages",totalPages); //需要展示的页 内容
 		return "index";
@@ -224,6 +258,8 @@ public class WebController {
 		}
 		Page<HsVideo> p = new Page<>(pageIndex,12);
 		long totalPages = 0; //总页数
+//		 List<HsVideo> users = HsVideoMapper.findAll();
+		
 		try {
 			IPage<HsVideo> rs = vs.page(p,Wrappers.lambdaQuery(HsVideo.class)
 					.eq(onlyPub ,HsVideo::getPublicType, 1)
@@ -340,13 +376,6 @@ public class WebController {
 		try {
 			HsVideo v = vs.getById(id);
 			String url = v.getVideoUrl();
-			//String url = "http://210.37.8.148:8888/live/test.1609403240005.flv";
-			//String url = "http://zh.hnhggp.com:18083/apk/class.mp4";
-			/*
-			 * HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-			 * conn.setRequestProperty("User-Agent","Mozilla/5.0 ( compatible ) ");
-			 * InputStream in = conn.getInputStream();
-			 */
 			InputStream in = new URL(url).openStream();
 			//InputStream in = new FileInputStream(new File("C:\\Users\\LIBO\\Videos\\class.mp4"));
 			ServletOutputStream out = response.getOutputStream(); 

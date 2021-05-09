@@ -7,7 +7,7 @@ public class LiveStream {
 	public int id;
 	public String app;
 	public String name;
-	public String url;  //http流地址		http://ip:8585
+	public String url;  //http流地址		http://ip:8585  视频流
 	public boolean active;
 	public int clients ;
 	//{"code":0,"server":49308,"stream":{"id":49310,"name":"dk","vhost":49309,"app":"live","live_ms":1611216178205,"clients":1,

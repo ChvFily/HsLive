@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 
 @Configuration
@@ -22,7 +23,5 @@ public class RestTemplateConfig {
         factory.setConnectTimeout(15000);
         return factory;
     }
-    
-    
 
 }

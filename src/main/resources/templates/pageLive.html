@@ -20,7 +20,7 @@
 		       <div class="bg-white">
 			    	<div  class=" pb-2">
 					    <a th:href="@{'/liveDetails?id='+${v.id}+'&ip='+${v.ip}}" class="text-dark" target="_blank" >
-							<img src="/res/dist/img/default_live.png" width="100%" class="bg-secondary">
+							<img th:src="'http://210.37.8.148:8888/live/videoImg/'+${v.getVideoTitle()}+'.jpg'" width="100%" class="bg-secondary">
 					    </a>
 				    </div>
 				    <div class="d-flex pb-2 px-2">

@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -12,6 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 
 @SpringBootApplication
 @EnableCaching
+@EnableScheduling // 开启定时任务功能
 @MapperScan("com.hs.live.mapper")
 public class LiveApplication {
 
