@@ -23,6 +23,6 @@ public interface HsVideoMapper extends BaseMapper<HsVideo> {
 	 * 查询hs_video 表所有数据
 	 * */
 	@Select("select * from hs_video")
-		List<HsVideo> findVideoAll();
+	List<HsVideo> findVideoAll();
 
 }

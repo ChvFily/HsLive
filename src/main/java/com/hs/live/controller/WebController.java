@@ -41,7 +41,6 @@ import com.hs.live.service.IHsVideoService;
 import com.hs.live.service.impl.HsFileServerServiceImpl;
 import com.hs.live.srs.LiveStream;
 import com.hs.live.util.LiveProperties;
-import com.hs.live.util.VideoLiveUtil;
 import com.hs.live.util.VideoUtil;
 //首页
 @CrossOrigin  //支持跨域问题
@@ -78,10 +77,11 @@ public class WebController {
 	 * */
 	@RequestMapping("/streams.do")
 	public String streams(Model model) {
-		List<LiveStream> liveList = getActiveStreams();
+		//获取视频流列表
+		List<LiveStream> liveList = getActiveStreams();  //返回 
 		String url = "";
-		//String dir = "D:\\liveTempImg/";  //本地图片
-		String dir = "//var//www//html//live//liveImg//";   // /var/www/html/live/liveImg/ 在服务器上对应的文件 liveImg 存放视频对应文件夹
+		String dir = "D:\\liveTempImg/";  //本地图片
+		// String dir = "//var//www//html//live//liveImg//";   // /var/www/html/live/liveImg/ 在服务器上对应的文件 liveImg 存放视频对应文件夹
 		//获取数据流地址 rtmp
 		//拼凑地址
 		for(LiveStream live:liveList) {
@@ -122,12 +122,12 @@ public class WebController {
 		for(HsFileServer fs:fsList) {
 			String api = "http://"+fs.getServerIp()+":"+fs.getSrsApiPort();
 			String url =api+"/api/v1/streams/";
-			String rs =  rt.getForObject(url, String.class);
-			JSONObject jo = JSONObject.parseObject(rs);
+			String rs =  rt.getForObject(url, String.class); //
+			JSONObject jo = JSONObject.parseObject(rs);  //获取 ip stream  传过来的数据 
 			JSONArray arr = jo.getJSONArray("streams");
 			for(int i=0;i<arr.size();i++) {
 				JSONObject s = arr.getJSONObject(i);
-				LiveStream ls = LiveStream.from(s);
+				LiveStream ls = LiveStream.from(s);  //获取只需要的 数据 段 
 				ls.ip = fs.getServerIp();
 				if(ls.active) ret.add(ls);
 			}
@@ -200,12 +200,13 @@ public class WebController {
 		model.addAttribute("totalPages",totalPages); //需要展示的页 内容
 		return "index";
 	}
-	@RequestMapping("/liveDetails")   // url = /liveDetails?id=xxxx&ip=  通过  get 方式 获取 数据
+	
+	@RequestMapping("/liveDetails")   // url = /liveDetails?id=xxxx&ip=  通过 get 方式 获取 数据
     public String liveDetails(String ip,Integer id,Model model){
 		if(id==null||id<=0 || ip==null || ip.isBlank()) return "liveDetails";
 		HsFileServer fs =  fss.getById(ip);
 		//String url = liveProperties.getSrsApiServer()+"/api/v1/streams/"+id;  回调窗口 
-		String url =  "http://"+fs.getServerIp()+":"+fs.getSrsApiPort()+"/api/v1/streams/"+id;
+		String url =  "http://"+fs.getServerIp()+":"+fs.getSrsApiPort()+"/api/v1/streams/"+id; //返回 一个直播 根据 id 确定
 		String rs =  rt.getForObject(url, String.class);
 		JSONObject jo = JSONObject.parseObject(rs);
 		LiveStream ls = LiveStream.from(jo.getJSONObject("stream"));
@@ -215,10 +216,10 @@ public class WebController {
         return "liveDetails";
     }
 	/**
-	 * yuxuhang
-	 * 获取一个直播的在线人数
-	 * input  id   根据id 信号数据 
-	 * output clients
+	 * @author yuxuhang
+	 * @deprecated 获取一个直播的在线人数
+	 * @param  id   根据id 信号数据 
+	 * @return  number of clients
 	 * */
 	@RequestMapping("/clients") 
     public String liveClients( Integer id , Model model){

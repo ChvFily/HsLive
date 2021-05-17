@@ -19,22 +19,21 @@ import com.hs.live.mapper.HsVideoMapper;
 
 
 /**
- * @author yuxuhang
- * @date 2021/05/03
- * 
  * 定时任务 获取video 的其中一帧
+ * @author yuxuhang
+ * @since 2021/05/03
+ * 
  */
 @Component
 public class FirstFrameRefaceTaskUtil {
 	
 	@Autowired HsVideoMapper videoMapper;
-	boolean enableReface = true; //是否可以更新 
+	boolean enableReface = false; //是否可以更新 
 	/**
 	 * 1.获取视频所有的路径+名称+时间戳
 	 * 2.更新所有图片资源所有的图像资源
-	 * 
 	 * */
-    @Scheduled(cron = "0 */1 * * * ?")  //  一天更新一次
+    @Scheduled(cron = "0 */1 * * * ?")  //一天更新一次
     public void execute() {
     	
     	if(enableReface) {
@@ -47,9 +46,8 @@ public class FirstFrameRefaceTaskUtil {
     			if(videoList.size()!=0) {
     				String videoFileName = video.getSrsFile(); // /var/www/html/live/test.20210311211937471.mp4
     	            String outputPath = "//var//www//html//live//videoImg//"+video.getVideoTitle()+".jpg"; // /var/www/html/live/videoImg/test.20210311211937471.mp4
-    	            // String outputPath = "D:/videoImg/"+p.getRecords().get(i).getVideoTitle()+".jpg";  // 本地调试文件夹
-   				
-//    				String videoFileName = "D:/video/HS.20210420111315998.mp4";  //本地测试
+    	            // String outputPath = "D:/videoImg/"+p.getRecords().get(i).getVideoTitle()+".jpg";  // 本地调试文件
+//    				String videoFileName = "D:/video/HS.20210420111315998.mp4";   //本地测试
 //    				String outputPath = "D:/videoImg/HS.20210420111315998.jpg";
     				int index = 1;
     	            File file = new File(outputPath);

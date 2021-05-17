@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2020-12-31
  */
 public interface IHsVideoService extends IService<HsVideo> {
-
+	
 }

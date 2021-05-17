@@ -43,14 +43,12 @@ public class MngController {
 		if(publicType==null) publicType=-1;
 		if(videoType==null) videoType="";
 		JSONObject jo = new JSONObject();
-		Page<HsVideo> p = new Page<>(1,100);//只查询前100条记录
+		Page<HsVideo> p = new Page<>(1,100); //只查询前100条记录
 		IPage<HsVideo> rs = vs.page(p,Wrappers.lambdaQuery(HsVideo.class) 
 				.eq(publicType>=0,HsVideo::getPublicType, publicType)
-				.eq(StringUtils.hasLength(videoType) ,HsVideo::getVideoType,videoType )
+				.eq(StringUtils.hasLength(videoType),HsVideo::getVideoType,videoType)
 				.orderByDesc(HsVideo::getId));
-		
-		List<HsVideo> list =rs.getRecords();//vs.list();
-		
+		List<HsVideo> list =rs.getRecords(); //vs.list();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);

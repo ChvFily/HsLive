@@ -24,13 +24,9 @@ public class HsVideoServiceImpl extends ServiceImpl<HsVideoMapper, HsVideo> impl
 	public boolean updateInfo(HsVideo v){
 		return update(null,Wrappers.lambdaUpdate(HsVideo.class).eq(HsVideo::getId, v.getId())
 				.set(HsVideo::getVideoTitle, v.getVideoTitle()) //*视频标题
-				.set(HsVideo::getVideoDesc, v.getVideoDesc())   //*解码后的视频数据
-				.set(HsVideo::getVideoType, v.getVideoType())   //*视频类型 ，估计是后缀名
+				.set(HsVideo::getVideoDesc, v.getVideoDesc())   //*解码描述
+				.set(HsVideo::getVideoType, v.getVideoType())   //*视频类型 
 				);
 	}
-//	public List<HsVideo> getVides(){
-//		
-//		
-//		
-//	}
+
 }

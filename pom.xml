@@ -33,7 +33,6 @@
 	    <groupId>com.baomidou</groupId>
 		    <artifactId>mybatis-plus-boot-starter</artifactId>
 		    <version>3.4.0</version>
-		    
 		</dependency>
 		<dependency>
 		    <groupId>com.baomidou</groupId>
@@ -98,7 +97,7 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+		<!-- @yuxuhang javac 截图 + ffmpeg -->
 		<dependency>
 	        <groupId>org.bytedeco</groupId>
 	        <artifactId>javacv</artifactId>
