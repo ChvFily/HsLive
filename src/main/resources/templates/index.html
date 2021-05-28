@@ -24,7 +24,7 @@
 	    <div class="col my-3 " th:each="v:${page.records}">
 	    	<div class="bg-white pb-2">
 		    <a th:href="@{'/details/'+${v.id}}" class="text-dark" target="_blank" >
-				<img th:src="'http://210.37.8.148:8888/live/videoImg/'+${v.getVideoTitle()}+'.jpg'" width="100%">	
+				<img th:src="'http://210.37.8.148:8888/hs_video/live/videoImg/'+${v.getVideoTitle()}+'.jpg'" width="100%">	
 				<span class="ml-2" th:text="${v.getSrsStream()}">标题</span>    
 		    </a>
 		    </div>

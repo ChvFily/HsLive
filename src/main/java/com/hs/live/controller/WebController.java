@@ -78,7 +78,7 @@ public class WebController {
 		String url = "";
 		
 		//String dir = "D:\\liveTempImg/";  //本地图片
-		String dir = "//mnt//file//live//liveImg//";   // /mnt/file/live/liveImg/ 直播图片
+		String dir = "//mnt//file//hs_video//live//liveImg//";   // /mnt/file/live/liveImg/ 直播图片
 		//获取数据流地址 rtmp
 		//拼凑地址
 		for(LiveStream live:liveList) {

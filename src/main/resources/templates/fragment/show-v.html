@@ -1,9 +1,9 @@
 <html xmlns:th="http://www.thymeleaf.org" >
-	<div class="col my-3 " th:each="v:${page.records}"> <!-- page.records Ò»Ò³¼ÇÂ¼£¨Ò»×éÊý¾Ý£© -->
+	<div class="col my-3 " th:each="v:${page.records}"> <!-- page.records Ò»Ò³ï¿½ï¿½Â¼ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ -->
 	   	<div class="bg-white pb-2">
 		    <a th:href="@{'/details/'+${v.id}}" class="text-dark" target="_blank" >
-				<img th:src="'http://210.37.8.148:8888/live/videoImg/'+${v.getVideoTitle()}+'.jpg'" width="100%">	
-				<span class="ml-2" th:text="${v.getSrsStream()}">±êÌâ</span>   
+				<img th:src="'http://210.37.8.148:8888/hs_video/live/videoImg/'+${v.getVideoTitle()}+'.jpg'" width="100%">	
+				<span class="ml-2" th:text="${v.getSrsStream()}">ï¿½ï¿½ï¿½ï¿½</span>   
 		    </a>
 	    </div>
 	</div>

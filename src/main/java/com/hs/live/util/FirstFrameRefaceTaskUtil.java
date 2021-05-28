@@ -45,7 +45,7 @@ public class FirstFrameRefaceTaskUtil {
     		for(HsVideo video:videoList){
     			if(videoList.size()!=0) {
     				String videoFileName = video.getSrsFile(); // /var/www/html/live/test.20210311211937471.mp4
-    	            String outputPath = "//mnt//file//live//videoImg//"+video.getVideoTitle()+".jpg"; // /var/www/html/live/videoImg/test.20210311211937471.mp4
+    	            String outputPath = "//mnt//file//hs_video//live//videoImg//"+video.getVideoTitle()+".jpg"; // /var/www/html/live/videoImg/test.20210311211937471.mp4
     				int index = 1;
     	            File file = new File(outputPath);
     	            if (!file.getParentFile().exists()){
