@@ -23,6 +23,12 @@ import org.springframework.stereotype.Service;
 @CacheConfig(cacheNames = "HsFileServer")
 @Service
 public class HsFileServerServiceImpl extends ServiceImpl<HsFileServerMapper, HsFileServer> implements IHsFileServerService {
+	
+	/**
+	 * 获取SRS服务器列表（可能存在多个列表）
+	 * @author chvfily
+	 * @since 2021-05-20
+	 * */
 	@Cacheable(key = "#root.methodName",unless = "#result==null")
 	@Override
 	public List<HsFileServer> list() {

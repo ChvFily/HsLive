@@ -7,9 +7,8 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 视频文件下载的服务器配置
+ * 视频文件下载的服务器配置 
  * </p>
- *
  * @author LIBO
  * @since 2020-12-31
  */

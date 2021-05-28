@@ -51,13 +51,9 @@ public class WebController {
 	@Autowired RestTemplate rt;
 	@Autowired IHsVideoService vs;
 	@Autowired LiveProperties liveProperties;
-	@Autowired HsFileServerServiceImpl fss;
-	
+	@Autowired HsFileServerServiceImpl fss; // 获取服务器列表
 	
 	boolean flageIsVideoFramg = true;  // 是否执行剪切视频图片的功能
-	
-//	@Autowired List<HsVideo> videolist = new ArrayList<>(); // all videos name
-//	@Autowired List<String>  videoAames = new ArrayList<>() ;
 	
 	@RequestMapping("/me")
 	@ResponseBody
@@ -72,16 +68,17 @@ public class WebController {
 	/**
 	 * 获取视频流
 	 * 更新视频的图片
-	 * 
-	 * 
 	 * */
 	@RequestMapping("/streams.do")
 	public String streams(Model model) {
 		//获取视频流列表
 		List<LiveStream> liveList = getActiveStreams();  //返回 
+		List<HsFileServer> fsList = fss.list();  // 获取服务器列表 （多个IP）
+		
 		String url = "";
-		String dir = "D:\\liveTempImg/";  //本地图片
-		// String dir = "//var//www//html//live//liveImg//";   // /var/www/html/live/liveImg/ 在服务器上对应的文件 liveImg 存放视频对应文件夹
+		
+		//String dir = "D:\\liveTempImg/";  //本地图片
+		String dir = "//mnt//file//live//liveImg//";   // /mnt/file/live/liveImg/ 直播图片
 		//获取数据流地址 rtmp
 		//拼凑地址
 		for(LiveStream live:liveList) {
@@ -95,9 +92,7 @@ public class WebController {
 		return "fragment/liveFragment";
 		
 	}
-	/**
-	 * 
-	 *
+	/** 
 	 * 数据格式
 	 * {"code":0,"server":46638,
 	 *	"streams":[
@@ -111,28 +106,28 @@ public class WebController {
 		 *		"audio":{"codec":"AAC","sample_rate":44100,"channel":2,"profile":"LC"}
 	 *		}
 	 *  ]}
-	 *  
 	 *  url =  "rtmp://"+ip+":1935/"+app+"/"+name;
 	 *  获取当前live info
-	 * 
+	 *  显示直播事宜
 	 */
 	private List<LiveStream>  getActiveStreams() {
 		List<LiveStream> ret = new ArrayList<>();
-		List<HsFileServer> fsList = fss.list();
+		List<HsFileServer> fsList = fss.list();  // 获取服务器列表 （多个IP）
 		for(HsFileServer fs:fsList) {
-			String api = "http://"+fs.getServerIp()+":"+fs.getSrsApiPort();
-			String url =api+"/api/v1/streams/";
-			String rs =  rt.getForObject(url, String.class); //
-			JSONObject jo = JSONObject.parseObject(rs);  //获取 ip stream  传过来的数据 
-			JSONArray arr = jo.getJSONArray("streams");
+			String api = "http://"+fs.getServerIp()+":"+fs.getSrsApiPort(); //http://210.37.8.148:1985/api/v1/streams/
+			String url = api+"/api/v1/streams/";   // http://ip:1985/api/v1/streams/ 推流接口 推流情况
+			String rs =  rt.getForObject(url, String.class); // 获取所有的视频流数据   
+			JSONObject jo = JSONObject.parseObject(rs);  //  划分多个视频流数据 推流个数 stream 
+			JSONArray arr = jo.getJSONArray("streams");  // 获取视频流的组
+			//获取推流
 			for(int i=0;i<arr.size();i++) {
 				JSONObject s = arr.getJSONObject(i);
-				LiveStream ls = LiveStream.from(s);  //获取只需要的 数据 段 
+				LiveStream ls = LiveStream.from(s);  // 获取只需要的 数据 段 
 				ls.ip = fs.getServerIp();
 				if(ls.active) ret.add(ls);
 			}
 		}
-		//String url = liveProperties.getSrsApiServer()+"/api/v1/streams/";
+		// String url = liveProperties.getSrsApiServer()+"/api/v1/streams/";
 		return ret;
 	}
 	
@@ -145,23 +140,6 @@ public class WebController {
 		/**
 		 * 根据名称搜索，返回所有的关键字 
 		 * */
-		//判断是否为管理员
-//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-//		//System.out.println(a.toString());
-//		boolean onlyPub = true;//只查找 公开的视频
-//		if(a!=null  && a.isAuthenticated() && !(a instanceof AnonymousAuthenticationToken)) { //认证后查询所有
-//			onlyPub = false;
-//		}
-//		Page<HsVideo> p = new Page<>();
-//		try {
-//			List<HsVideo> rs = vs.page(p,Wrappers.lambdaQuery(HsVideo.class)
-//					.eq(onlyPub ,HsVideo::getPublicType, 1)
-//					.eq(HsVideo::getDeleteFlag, 0)
-//						.orderByDesc(HsVideo::getId));
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//			
-//		}
 		return info;
 	}
 	
@@ -180,7 +158,7 @@ public class WebController {
 		//判断是否为管理员
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		//System.out.println(a.toString());
-		boolean onlyPub = true;//只查找 公开的视频
+		boolean onlyPub = true;//只查找公开的视频
 		if(a!=null  && a.isAuthenticated() && !(a instanceof AnonymousAuthenticationToken)) { //认证后查询所有
 			onlyPub = false;
 		}
@@ -190,11 +168,10 @@ public class WebController {
 			IPage<HsVideo> rs = vs.page(p,Wrappers.lambdaQuery(HsVideo.class)
 					.eq(onlyPub ,HsVideo::getPublicType, 1)
 					.eq(HsVideo::getDeleteFlag, 0)
-						.orderByDesc(HsVideo::getId));
+					.orderByDesc(HsVideo::getId));
 			totalPages = rs.getPages();
 		}catch (Exception e) {
-			e.printStackTrace();
-			
+			e.printStackTrace();	
 		} 
 		model.addAttribute("page",p); // 添加数据到 主页点的前端 所有内容
 		model.addAttribute("totalPages",totalPages); //需要展示的页 内容
@@ -206,7 +183,7 @@ public class WebController {
 		if(id==null||id<=0 || ip==null || ip.isBlank()) return "liveDetails";
 		HsFileServer fs =  fss.getById(ip);
 		//String url = liveProperties.getSrsApiServer()+"/api/v1/streams/"+id;  回调窗口 
-		String url =  "http://"+fs.getServerIp()+":"+fs.getSrsApiPort()+"/api/v1/streams/"+id; //返回 一个直播 根据 id 确定
+		String url =  "http://"+fs.getServerIp()+":"+fs.getSrsApiPort()+"/api/v1/streams/"+id; //返回一个直播根据id确定
 		String rs =  rt.getForObject(url, String.class);
 		JSONObject jo = JSONObject.parseObject(rs);
 		LiveStream ls = LiveStream.from(jo.getJSONObject("stream"));
@@ -252,7 +229,7 @@ public class WebController {
 		if(pageIndex==null||pageIndex<1) pageIndex=1;
 		//判断是否为管理员
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		//System.out.println(a.toString());
+		//System.out.println(a.toString()); 
 		boolean onlyPub = true;// 只查找 公开的视频
 		if(a!=null  && a.isAuthenticated() && !(a instanceof AnonymousAuthenticationToken)) { //认证后查询所有
 			onlyPub = false;
@@ -306,6 +283,7 @@ public class WebController {
 		model.addAttribute("seachInfo",seachInfo);
 		return "fragment/show-p";
     }
+	
 	@RequestMapping("/pageVideo")
 	public String pageVideo(Model model,Integer pageIndex) {
 		if(pageIndex==null||pageIndex<1) pageIndex=1;
@@ -326,7 +304,6 @@ public class WebController {
 			totalPages = rs.getPages();
 		}catch (Exception e) {
 			e.printStackTrace();
-			
 		}
 		// 封装 Page 
 		model.addAttribute("page",p);
@@ -362,7 +339,7 @@ public class WebController {
 			String url = liveProperties.getCasServerUrl()+"/oauth2.0/profile?access_token="
 					+token;
 			try {
-				//RestTemplate rt =new RestTemplate();//HttpClientUtils.getInstance(null, false); //
+				//RestTemplate rt =new RestTemplate();//HttpClientUtils.getInstance(null, false);
 				model.addAttribute("data",rt.getForObject(url, String.class));
 			}
 			catch (Exception e) {
@@ -380,7 +357,6 @@ public class WebController {
 			InputStream in = new URL(url).openStream();
 			//InputStream in = new FileInputStream(new File("C:\\Users\\LIBO\\Videos\\class.mp4"));
 			ServletOutputStream out = response.getOutputStream(); 
-			
 			int length;
 			byte[] buffer = new byte[20 * 1024];
 			// 向前台输出视频流
@@ -403,7 +379,6 @@ public class WebController {
 			String url = "http://zh.hnhggp.com:18083/apk/timg.jpg";
 			InputStream in = new URL(url).openStream();
 			ServletOutputStream out = response.getOutputStream(); 
-			
 			int length;
 			byte[] buffer = new byte[20 * 1024];
 			// 向前台输出视频流

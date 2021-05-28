@@ -18,14 +18,15 @@ import com.hs.live.srs.CallBackParam;
 import com.hs.live.util.Helper;
 //srs回调接口
 @RestController
-@RequestMapping("/srs")
+@RequestMapping("/srs") //向我们发起服务器发起请求 
 public class SrsController {
 	@Autowired IHsVideoService vs;
 	@Autowired HsFileServerServiceImpl fss;
 	
-	//		/var/www/html/live/test.1609384972543.flv
+	
+	// /var/www/html/live/test.1609384972543.flv  发起视频录播请求
 	@RequestMapping("/dvr")
-	public String on_dvr( HttpServletRequest request,@RequestBody CallBackParam p) {
+	public void on_dvr( HttpServletRequest request,@RequestBody CallBackParam p) {
 		System.out.println(JSON.toJSONString(p));
 		HsVideo v = new HsVideo();
 		v.setClientId(p.client_id);
@@ -33,7 +34,7 @@ public class SrsController {
 		v.setSrsVhost(p.vhost);
 		v.setSrsApp(p.app);
 		v.setSrsStream(p.stream);
-		v.setSrsParam(p.param);;
+		v.setSrsParam(p.param);
 		v.setSrsCwd(p.cwd);
 		v.setSrsFile(p.file);
 		//v.setSaveTime(new Date());
@@ -53,7 +54,6 @@ public class SrsController {
 			v.setVideoUrl(url);
 			vs.save(v);
 		}
-		return "0";
 	}
 	private String getUrl(String ip,String file) {
 		List<HsFileServer> fsList =  fss.list();
@@ -62,9 +62,9 @@ public class SrsController {
 				String docDir = fs.getServerDocDir();
 				int idx = file.indexOf(docDir);
 				if(idx>=0){
-					String path =  file.substring(docDir.length()); 
+					String path = file.substring(docDir.length()); 
 					String port =80==fs.getServerPort()?"":":"+fs.getServerPort();
-					return fs.getServerSchema()+"://"+fs.getServerIp()+port+path; //自行拼接起来视频地址
+					return fs.getServerSchema()+"://"+fs.getServerIp()+port+path;  //自行拼接起来视频地址
 				}
 			}
 		}

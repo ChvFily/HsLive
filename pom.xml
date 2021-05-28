@@ -11,7 +11,7 @@
 	<groupId>com.hs</groupId>
 	<artifactId>live</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>live</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

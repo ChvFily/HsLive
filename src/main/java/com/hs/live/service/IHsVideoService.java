@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
- * 录制的视频 服务类
+ * 	录制的视频 服务类
  * </p>
  *
  * @author LIBO
